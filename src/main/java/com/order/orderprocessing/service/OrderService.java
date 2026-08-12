@@ -4,7 +4,11 @@ import com.order.orderprocessing.entity.AppUser;
 import com.order.orderprocessing.repository.UserRepository;
 import com.order.orderprocessing.common.exception.BusinessException;
 import com.order.orderprocessing.common.exception.ErrorCode;
-import com.order.orderprocessing.dto.*;
+import com.order.orderprocessing.dto.request.CreateOrderRequest;
+import com.order.orderprocessing.dto.request.CreateOrderItemRequest;
+import com.order.orderprocessing.dto.response.OrderResponse;
+import com.order.orderprocessing.dto.response.OrderSummaryResponse;
+import com.order.orderprocessing.dto.response.PageResponse;
 import com.order.orderprocessing.entity.Order;
 import com.order.orderprocessing.entity.OrderItem;
 import com.order.orderprocessing.entity.OrderStatus;
@@ -43,7 +47,7 @@ public class OrderService {
         validateItems(request.items());
 
         List<Long> productIds = request.items().stream()
-                .map(CreateOrderRequest.Item::productId)
+                .map(CreateOrderItemRequest::productId)
                 .sorted()
                 .toList();
         List<Product> lockedProducts = productRepository.findAllByIdForUpdate(productIds);
@@ -60,7 +64,7 @@ public class OrderService {
             }
         }
 
-        for (CreateOrderRequest.Item item : request.items()) {
+        for (CreateOrderItemRequest item : request.items()) {
             Product product = products.get(item.productId());
             if (product.getStock() < item.quantity()) {
                 throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK,
@@ -75,7 +79,7 @@ public class OrderService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ACCESS_DENIED, "Authenticated user no longer exists"));
         Order order = new Order(generateOrderCode(), user, total, request.shippingAddress(), request.note());
 
-        for (CreateOrderRequest.Item item : request.items()) {
+        for (CreateOrderItemRequest item : request.items()) {
             Product product = products.get(item.productId());
             BigDecimal subtotal = product.getPrice().multiply(BigDecimal.valueOf(item.quantity()));
             product.reduceStock(item.quantity());
@@ -140,12 +144,12 @@ public class OrderService {
         return OrderResponse.from(order);
     }
 
-    private void validateItems(List<CreateOrderRequest.Item> items) {
+    private void validateItems(List<CreateOrderItemRequest> items) {
         if (items.isEmpty()) {
             throw new BusinessException(ErrorCode.EMPTY_ORDER_ITEMS, "Order item list must not be empty");
         }
         Set<Long> uniqueIds = new HashSet<>();
-        for (CreateOrderRequest.Item item : items) {
+        for (CreateOrderItemRequest item : items) {
             if (!uniqueIds.add(item.productId())) {
                 throw new BusinessException(ErrorCode.DUPLICATE_PRODUCT,
                         "Product " + item.productId() + " appears more than once");

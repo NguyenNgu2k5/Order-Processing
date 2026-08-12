@@ -64,7 +64,9 @@ Use the returned token as `Authorization: Bearer <accessToken>`.
 - `service`: transaction boundaries and business logic.
 - `repository`: Spring Data JPA access and database locking queries.
 - `entity`: JPA entities and domain status enums.
-- `dto`: API request, response, pagination, and authenticated-principal records.
+- `dto.request`: one request DTO per file.
+- `dto.response`: one response DTO per file.
+- `dto.CurrentUser`: authenticated principal used internally by Spring Security.
 - `config`: JWT filter, Spring Security, OpenAPI, and local demo data.
 - `common.exception` / `common.response`: consistent API error handling.
 

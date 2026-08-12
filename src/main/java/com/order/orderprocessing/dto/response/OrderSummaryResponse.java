@@ -1,4 +1,4 @@
-package com.order.orderprocessing.dto;
+package com.order.orderprocessing.dto.response;
 
 import com.order.orderprocessing.entity.Order;
 import com.order.orderprocessing.entity.OrderStatus;

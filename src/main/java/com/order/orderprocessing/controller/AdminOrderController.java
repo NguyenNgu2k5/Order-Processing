@@ -1,7 +1,7 @@
 package com.order.orderprocessing.controller;
 
-import com.order.orderprocessing.dto.OrderResponse;
-import com.order.orderprocessing.dto.UpdateOrderStatusRequest;
+import com.order.orderprocessing.dto.request.UpdateOrderStatusRequest;
+import com.order.orderprocessing.dto.response.OrderResponse;
 import com.order.orderprocessing.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

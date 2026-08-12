@@ -2,13 +2,12 @@ package com.order.orderprocessing.controller;
 
 import com.order.orderprocessing.common.exception.BusinessException;
 import com.order.orderprocessing.common.exception.ErrorCode;
+import com.order.orderprocessing.dto.request.LoginRequest;
+import com.order.orderprocessing.dto.response.LoginResponse;
 import com.order.orderprocessing.entity.AppUser;
-import com.order.orderprocessing.entity.Role;
 import com.order.orderprocessing.repository.UserRepository;
 import com.order.orderprocessing.service.JwtService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,4 @@ public class AuthController {
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_CREDENTIALS, "Invalid email or password"));
         return new LoginResponse(jwtService.createToken(user), "Bearer", user.getRole());
     }
-
-    public record LoginRequest(@NotBlank @Email String email, @NotBlank String password) {}
-    public record LoginResponse(String accessToken, String tokenType, Role role) {}
 }

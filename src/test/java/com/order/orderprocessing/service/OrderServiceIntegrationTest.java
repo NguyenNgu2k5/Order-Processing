@@ -5,8 +5,9 @@ import com.order.orderprocessing.entity.Role;
 import com.order.orderprocessing.repository.UserRepository;
 import com.order.orderprocessing.common.exception.BusinessException;
 import com.order.orderprocessing.common.exception.ErrorCode;
-import com.order.orderprocessing.dto.CreateOrderRequest;
-import com.order.orderprocessing.dto.OrderResponse;
+import com.order.orderprocessing.dto.request.CreateOrderRequest;
+import com.order.orderprocessing.dto.request.CreateOrderItemRequest;
+import com.order.orderprocessing.dto.response.OrderResponse;
 import com.order.orderprocessing.entity.OrderStatus;
 import com.order.orderprocessing.entity.PaymentStatus;
 import com.order.orderprocessing.entity.Product;
@@ -74,7 +75,7 @@ class OrderServiceIntegrationTest {
     @Test
     void rejectsMissingProduct() {
         assertBusiness(ErrorCode.PRODUCT_NOT_FOUND,
-                () -> orderService.create(user.getId(), request(new CreateOrderRequest.Item(99999L, 1))));
+                () -> orderService.create(user.getId(), request(new CreateOrderItemRequest(99999L, 1))));
     }
 
     @Test
@@ -171,16 +172,16 @@ class OrderServiceIntegrationTest {
         return productRepository.save(new Product(name, new BigDecimal(price), stock, active));
     }
 
-    private OrderResponse create(AppUser owner, CreateOrderRequest.Item... items) {
+    private OrderResponse create(AppUser owner, CreateOrderItemRequest... items) {
         return orderService.create(owner.getId(), request(items));
     }
 
-    private CreateOrderRequest request(CreateOrderRequest.Item... items) {
+    private CreateOrderRequest request(CreateOrderItemRequest... items) {
         return new CreateOrderRequest("123 Test Street", "note", List.of(items));
     }
 
-    private CreateOrderRequest.Item item(Product product, int quantity) {
-        return new CreateOrderRequest.Item(product.getId(), quantity);
+    private CreateOrderItemRequest item(Product product, int quantity) {
+        return new CreateOrderItemRequest(product.getId(), quantity);
     }
 
     private void assertBusiness(ErrorCode code, Runnable action) {

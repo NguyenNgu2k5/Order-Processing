@@ -1,4 +1,4 @@
-package com.order.orderprocessing.dto;
+package com.order.orderprocessing.dto.response;
 
 import org.springframework.data.domain.Page;
 

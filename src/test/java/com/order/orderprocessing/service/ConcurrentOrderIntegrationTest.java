@@ -3,7 +3,8 @@ package com.order.orderprocessing.service;
 import com.order.orderprocessing.entity.AppUser;
 import com.order.orderprocessing.entity.Role;
 import com.order.orderprocessing.repository.UserRepository;
-import com.order.orderprocessing.dto.CreateOrderRequest;
+import com.order.orderprocessing.dto.request.CreateOrderRequest;
+import com.order.orderprocessing.dto.request.CreateOrderItemRequest;
 import com.order.orderprocessing.entity.Product;
 import com.order.orderprocessing.repository.OrderRepository;
 import com.order.orderprocessing.repository.ProductRepository;
@@ -58,7 +59,7 @@ class ConcurrentOrderIntegrationTest {
                         try {
                             orderService.create(userId, new CreateOrderRequest(
                                     "Concurrent Test Address", null,
-                                    List.of(new CreateOrderRequest.Item(productId, 1))));
+                                    List.of(new CreateOrderItemRequest(productId, 1))));
                             return true;
                         } catch (RuntimeException exception) {
                             return false;
