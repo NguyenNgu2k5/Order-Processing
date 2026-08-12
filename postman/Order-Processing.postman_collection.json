@@ -1,0 +1,97 @@
+{
+  "info": {
+    "name": "Order Processing and Refund API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8080"},
+    {"key": "userToken", "value": ""},
+    {"key": "adminToken", "value": ""},
+    {"key": "orderId", "value": "1"}
+  ],
+  "item": [
+    {
+      "name": "Login USER",
+      "event": [{"listen": "test", "script": {"exec": ["pm.collectionVariables.set('userToken', pm.response.json().accessToken);"]}}],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password\"\n}"},
+        "url": "{{baseUrl}}/api/v1/auth/login"
+      }
+    },
+    {
+      "name": "Login ADMIN",
+      "event": [{"listen": "test", "script": {"exec": ["pm.collectionVariables.set('adminToken', pm.response.json().accessToken);"]}}],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password\"\n}"},
+        "url": "{{baseUrl}}/api/v1/auth/login"
+      }
+    },
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{adminToken}}", "type": "string"}]},
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"name\": \"USB-C Hub\",\n  \"price\": 350000,\n  \"stock\": 20,\n  \"active\": true\n}"},
+        "url": "{{baseUrl}}/api/v1/products"
+      }
+    },
+    {
+      "name": "Create Order",
+      "event": [{"listen": "test", "script": {"exec": ["pm.collectionVariables.set('orderId', pm.response.json().id);"]}}],
+      "request": {
+        "method": "POST",
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{userToken}}", "type": "string"}]},
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"shippingAddress\": \"123 Nguyen Tat Thanh, Quy Nhon\",\n  \"note\": \"Call before delivery\",\n  \"items\": [\n    {\"productId\": 1, \"quantity\": 2},\n    {\"productId\": 2, \"quantity\": 1}\n  ]\n}"},
+        "url": "{{baseUrl}}/api/v1/orders"
+      }
+    },
+    {
+      "name": "List My Orders",
+      "request": {
+        "method": "GET",
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{userToken}}", "type": "string"}]},
+        "url": "{{baseUrl}}/api/v1/orders?page=0&size=10"
+      }
+    },
+    {
+      "name": "Get My Order",
+      "request": {
+        "method": "GET",
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{userToken}}", "type": "string"}]},
+        "url": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+      }
+    },
+    {
+      "name": "Pay Order",
+      "request": {
+        "method": "PUT",
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{userToken}}", "type": "string"}]},
+        "url": "{{baseUrl}}/api/v1/orders/{{orderId}}/pay"
+      }
+    },
+    {
+      "name": "Cancel Order",
+      "request": {
+        "method": "PUT",
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{userToken}}", "type": "string"}]},
+        "url": "{{baseUrl}}/api/v1/orders/{{orderId}}/cancel"
+      }
+    },
+    {
+      "name": "Admin Update Status",
+      "request": {
+        "method": "PUT",
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{adminToken}}", "type": "string"}]},
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"status\": \"CONFIRMED\"\n}"},
+        "url": "{{baseUrl}}/api/v1/admin/orders/{{orderId}}/status"
+      }
+    }
+  ]
+}
