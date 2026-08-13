@@ -10,13 +10,20 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
+
     @Bean
-    OpenAPI orderProcessingOpenApi() {
-        String scheme = "bearerAuth";
+    OpenAPI openApi() {
         return new OpenAPI()
-                .info(new Info().title("Order Processing and Refund API").version("v1"))
-                .addSecurityItem(new SecurityRequirement().addList(scheme))
-                .components(new Components().addSecuritySchemes(scheme,
-                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+                .info(new Info()
+                        .title("Order Processing API")
+                        .version("v1"))
+                .components(new Components()
+                        .addSecuritySchemes("bearerAuth",
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")))
+                .addSecurityItem(new SecurityRequirement()
+                        .addList("bearerAuth"));
     }
 }
